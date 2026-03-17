@@ -1,0 +1,24 @@
+.venv/
+.pytest_cache/
+.pytest_tmp/
+pytest-cache-files-*/
+.coverage
+htmlcov/
+.vscode/
+.idea/
+__pycache__/
+*.pyc
+*.pyo
+.DS_Store
+.env
+.env.*
+!.env.example
+logs/
+*.log
+flask_session/
+data/temp/
+translations/*/LC_MESSAGES/*.mo
+# Local-only artifacts
+project_structure.txt
+test.py
+exclude.txt

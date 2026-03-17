@@ -1,0 +1,31 @@
+image: python:3.12-slim
+
+stages:
+  - validate
+  - deploy
+
+validate:
+  stage: validate
+  script:
+    - python --version
+    - python -m compileall app.py run.py admin auth app_functions services utils
+
+# Deployment template for self-hosted Linux runner via SSH.
+# Required CI variables:
+# DEPLOY_HOST, DEPLOY_USER, DEPLOY_PATH, SSH_PRIVATE_KEY
+# Optional: DEPLOY_BRANCH (default: main)
+deploy:
+  stage: deploy
+  only:
+    - main
+  before_script:
+    - apt-get update && apt-get install -y --no-install-recommends openssh-client git
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - printf "%s" "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - ssh-keyscan "$DEPLOY_HOST" >> ~/.ssh/known_hosts
+  script:
+    - export DEPLOY_BRANCH="${DEPLOY_BRANCH:-main}"
+    - ssh "$DEPLOY_USER@$DEPLOY_HOST" "cd $DEPLOY_PATH && git fetch --all && git checkout $DEPLOY_BRANCH && git pull origin $DEPLOY_BRANCH && docker compose up -d --build"
+  when: manual
