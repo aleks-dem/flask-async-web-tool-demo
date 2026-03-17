@@ -1,0 +1,433 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row">
+  <div class="col-2" style="width: 120px; min-width: 120px;">
+    <a href="{{ back_url or url_for('auth_bp.dashboard') }}" class="btn btn-secondary mb-3 w-100">{{ gettext('Back') }}</a>
+    {% if is_processing %}
+      <button type="button" id="clear-form-btn" class="btn btn-warning w-100" disabled>{{ gettext('Clear form') }}</button>
+    {% else %}
+      <button type="button" id="clear-form-btn" class="btn btn-warning w-100">{{ gettext('Clear form') }}</button>
+    {% endif %}
+  </div>
+
+  <div class="col-10">
+    <h3>{{ gettext('Transaction Lookup') }}</h3>
+    <h5>{{ gettext('Choose how to provide references for lookup:') }}</h5>
+
+    <div id="no-data-message" class="alert alert-warning d-none"></div>
+    <div id="error-message" class="alert alert-danger d-none"></div>
+
+    {% if is_processing %}
+      <div id="processing-message" class="alert alert-info">{{ gettext('A process has started. Please wait...') }}</div>
+      <div class="progress mb-3" id="progress-container">
+        <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width: {{ percentage }}%;" id="progress-bar">{{ percentage }}%</div>
+      </div>
+    {% else %}
+      <div id="processing-message" class="alert alert-info d-none"></div>
+      <div class="progress mb-3 d-none" id="progress-container">
+        <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width: 0%;" id="progress-bar">0%</div>
+      </div>
+    {% endif %}
+
+    <form id="transaction-lookup-form" method="POST" action="{{ url_for('transaction_lookup.lookup') }}" enctype="multipart/form-data">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="mb-3">
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="search_type" id="search_type_single" value="single" checked>
+          <label class="form-check-label" for="search_type_single">{{ gettext('Single reference ID') }}</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="search_type" id="search_type_excel" value="excel">
+          <label class="form-check-label" for="search_type_excel">{{ gettext('Multiple reference IDs from Excel (up to 50 IDs)') }}</label>
+        </div>
+      </div>
+
+      <div class="mb-3" id="single-reference-block">
+        <label for="input_reference" class="form-label">{{ gettext('Reference ID (at least 5 characters)') }}</label>
+        <input type="text" name="input_reference" id="input_reference" class="form-control">
+      </div>
+
+      <div class="mb-3 d-none" id="excel-file-block">
+        <label for="excel_file" class="form-label">{{ gettext('Upload Excel file (up to 50 IDs)') }}</label>
+        <input type="file" name="excel_file" id="excel_file" class="form-control" accept=".xlsx,.xls">
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="start_date" class="form-label">{{ gettext('Start date') }}</label>
+          <input type="date" name="start_date" id="start_date" class="form-control" required>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label for="end_date" class="form-label">{{ gettext('End date') }}</label>
+          <input type="date" name="end_date" id="end_date" class="form-control" required>
+        </div>
+      </div>
+
+      {% if is_processing %}
+        <button type="submit" class="btn btn-primary" id="process-btn" disabled>
+          <span id="process-btn-text" class="d-none">{{ gettext('Process') }}</span>
+          <span id="process-btn-spinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        </button>
+      {% else %}
+        <button type="submit" class="btn btn-primary" id="process-btn">
+          <span id="process-btn-text">{{ gettext('Process') }}</span>
+          <span id="process-btn-spinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+        </button>
+      {% endif %}
+    </form>
+
+    <div class="mt-4 d-none" id="results-container">
+      <h4>{{ gettext('Lookup results') }}</h4>
+      <button class="btn btn-success mt-3" id="download-btn" style="display: none;">{{ gettext('Download as Excel') }}</button>
+      <p></p>
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>{{ gettext('Input reference') }}</th>
+              <th>{{ gettext('Workspace') }}</th>
+              <th>{{ gettext('Record ID') }}</th>
+              <th>{{ gettext('Created at') }}</th>
+              <th>{{ gettext('Updated at') }}</th>
+              <th>{{ gettext('Route') }}</th>
+              <th>{{ gettext('Status') }}</th>
+              <th>{{ gettext('User ID') }}</th>
+              <th>{{ gettext('User registered at') }}</th>
+              <th>{{ gettext('Currency') }}</th>
+              <th>{{ gettext('Amount') }}</th>
+              <th>{{ gettext('Amount USD') }}</th>
+              <th>{{ gettext('Fee') }}</th>
+              <th>{{ gettext('Fee USD') }}</th>
+              <th>{{ gettext('Masked instrument') }}</th>
+              <th>{{ gettext('Source') }}</th>
+              <th>{{ gettext('Method') }}</th>
+              <th>{{ gettext('Source reference') }}</th>
+              <th>{{ gettext('Merchant account') }}</th>
+              <th>{{ gettext('Gateway route') }}</th>
+              <th>{{ gettext('Gateway account') }}</th>
+              <th>{{ gettext('Source code') }}</th>
+              <th>{{ gettext('Tenant account') }}</th>
+              <th>{{ gettext('External reference') }}</th>
+              <th>{{ gettext('External payment ID') }}</th>
+            </tr>
+          </thead>
+          <tbody id="results-table"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const functionKey = 'transaction_lookup';
+const POLLING_INTERVAL = 2000;
+let pollingInterval = null;
+
+const searchTypeSingle = document.getElementById('search_type_single');
+const searchTypeExcel = document.getElementById('search_type_excel');
+const singleBlock = document.getElementById('single-reference-block');
+const excelBlock = document.getElementById('excel-file-block');
+const processBtn = document.getElementById('process-btn');
+const btnText = document.getElementById('process-btn-text');
+const spinner = document.getElementById('process-btn-spinner');
+const clearButton = document.getElementById('clear-form-btn');
+
+function toggleSearchType() {
+  if (searchTypeSingle.checked) {
+    singleBlock.classList.remove('d-none');
+    excelBlock.classList.add('d-none');
+    document.getElementById('input_reference').required = true;
+    document.getElementById('excel_file').required = false;
+  } else {
+    singleBlock.classList.add('d-none');
+    excelBlock.classList.remove('d-none');
+    document.getElementById('input_reference').required = false;
+    document.getElementById('excel_file').required = true;
+  }
+}
+
+searchTypeSingle.addEventListener('change', toggleSearchType);
+searchTypeExcel.addEventListener('change', toggleSearchType);
+
+function showMessage(elemId, text) {
+  const elem = document.getElementById(elemId);
+  elem.textContent = text;
+  elem.classList.remove('d-none');
+}
+
+function hideMessage(elemId) {
+  document.getElementById(elemId).classList.add('d-none');
+}
+
+function showProgressBar() {
+  document.getElementById('progress-container').classList.remove('d-none');
+}
+
+function hideProgressBar() {
+  document.getElementById('progress-container').classList.add('d-none');
+}
+
+function updateProgressBar(value) {
+  const bar = document.getElementById('progress-bar');
+  bar.style.width = value + '%';
+  bar.textContent = value + '%';
+}
+
+function resetResults() {
+  document.getElementById('results-container').classList.add('d-none');
+  document.getElementById('results-table').innerHTML = '';
+  document.getElementById('download-btn').style.display = 'none';
+}
+
+function restorePageState(results, fileUrl) {
+  const container = document.getElementById('results-container');
+  const tableBody = document.getElementById('results-table');
+  const downloadBtn = document.getElementById('download-btn');
+
+  container.classList.remove('d-none');
+  tableBody.innerHTML = '';
+
+  results.forEach(item => {
+    const row = `<tr>
+      <td>${item.input_reference}</td>
+      <td>${item.workspace}</td>
+      <td>${item.record_id}</td>
+      <td>${item.created_at}</td>
+      <td>${item.updated_at}</td>
+      <td>${item.processing_route}</td>
+      <td>${item.record_status}</td>
+      <td>${item.user_id}</td>
+      <td>${item.user_registered_at}</td>
+      <td>${item.currency}</td>
+      <td>${item.amount}</td>
+      <td>${item.amount_usd}</td>
+      <td>${item.fee}</td>
+      <td>${item.fee_usd}</td>
+      <td>${item.masked_instrument}</td>
+      <td>${item.source_name}</td>
+      <td>${item.payment_method}</td>
+      <td>${item.source_reference}</td>
+      <td>${item.merchant_account}</td>
+      <td>${item.gateway_route}</td>
+      <td>${item.gateway_account}</td>
+      <td>${item.source_code}</td>
+      <td>${item.tenant_account}</td>
+      <td>${item.external_reference}</td>
+      <td>${item.external_payment_id}</td>
+    </tr>`;
+    tableBody.insertAdjacentHTML('beforeend', row);
+  });
+
+  if (fileUrl) {
+    downloadBtn.style.display = 'block';
+    downloadBtn.onclick = () => {
+      window.location.href = fileUrl;
+      resetResults();
+      clearFormFields();
+      saveFormValues();
+    };
+  }
+}
+
+function handleStatus(statusData) {
+  const status = statusData.status;
+  const progressValue = statusData.progress !== undefined ? statusData.progress : 0;
+
+  switch (status) {
+    case 'completed':
+      hideMessage('processing-message');
+      hideMessage('no-data-message');
+      hideMessage('error-message');
+      hideProgressBar();
+      resetResults();
+      spinner.classList.add('d-none');
+      btnText.classList.remove('d-none');
+      processBtn.disabled = false;
+      clearButton.disabled = false;
+      if (statusData.results && statusData.results.length > 0) {
+        restorePageState(statusData.results, statusData.file_url);
+      } else {
+        showMessage('no-data-message', '{{ gettext("No matching data found") }}');
+      }
+      break;
+
+    case 'processing':
+      hideMessage('no-data-message');
+      hideMessage('error-message');
+      resetResults();
+      showMessage('processing-message', '{{ gettext("A process has started. Please wait...") }}');
+      showProgressBar();
+      updateProgressBar(progressValue);
+      spinner.classList.remove('d-none');
+      btnText.classList.add('d-none');
+      processBtn.disabled = true;
+      clearButton.disabled = true;
+      break;
+
+    case 'no_data':
+      hideMessage('processing-message');
+      hideMessage('error-message');
+      hideProgressBar();
+      resetResults();
+      showMessage('no-data-message', statusData.message || '{{ gettext("No data found") }}');
+      spinner.classList.add('d-none');
+      btnText.classList.remove('d-none');
+      processBtn.disabled = false;
+      clearButton.disabled = false;
+      break;
+
+    case 'error':
+      hideMessage('processing-message');
+      hideMessage('no-data-message');
+      hideProgressBar();
+      resetResults();
+      showMessage('error-message', statusData.error || '{{ gettext("An error occurred") }}');
+      spinner.classList.add('d-none');
+      btnText.classList.remove('d-none');
+      processBtn.disabled = false;
+      clearButton.disabled = false;
+      break;
+
+    default:
+      hideMessage('processing-message');
+      hideMessage('no-data-message');
+      hideMessage('error-message');
+      hideProgressBar();
+      resetResults();
+      spinner.classList.add('d-none');
+      btnText.classList.remove('d-none');
+      processBtn.disabled = false;
+      clearButton.disabled = false;
+  }
+}
+
+async function checkStatus() {
+  try {
+    const response = await fetch(`/transaction_lookup/status/${functionKey}`);
+    const data = await response.json();
+    handleStatus(data);
+    if (data.status !== 'processing') {
+      clearInterval(pollingInterval);
+    }
+  } catch (error) {
+    console.error(error);
+    clearInterval(pollingInterval);
+  }
+}
+
+function saveFormValues() {
+  const formValues = {
+    search_type: searchTypeSingle.checked ? 'single' : 'excel',
+    input_reference: document.getElementById('input_reference').value,
+    start_date: document.getElementById('start_date').value,
+    end_date: document.getElementById('end_date').value
+  };
+  localStorage.setItem('transactionLookupFormValues', JSON.stringify(formValues));
+}
+
+function loadFormValues() {
+  const saved = localStorage.getItem('transactionLookupFormValues');
+  if (!saved) return;
+  const formValues = JSON.parse(saved);
+
+  if (formValues.search_type === 'excel') {
+    searchTypeExcel.checked = true;
+  } else {
+    searchTypeSingle.checked = true;
+  }
+
+  document.getElementById('input_reference').value = formValues.input_reference || '';
+  document.getElementById('start_date').value = formValues.start_date || '';
+  document.getElementById('end_date').value = formValues.end_date || '';
+  toggleSearchType();
+}
+
+function clearFormFields() {
+  document.getElementById('input_reference').value = '';
+  document.getElementById('excel_file').value = '';
+  document.getElementById('start_date').value = '';
+  document.getElementById('end_date').value = '';
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  loadFormValues();
+
+  try {
+    const response = await fetch(`/transaction_lookup/status/${functionKey}`);
+    const data = await response.json();
+    handleStatus(data);
+    if (data.status === 'processing') {
+      pollingInterval = setInterval(checkStatus, POLLING_INTERVAL);
+    }
+  } catch (error) {
+    console.error('Error checking status on page load:', error);
+  }
+});
+
+document.getElementById('transaction-lookup-form').addEventListener('submit', async event => {
+  event.preventDefault();
+
+  hideMessage('processing-message');
+  hideMessage('no-data-message');
+  hideMessage('error-message');
+  hideProgressBar();
+  resetResults();
+
+  saveFormValues();
+
+  spinner.classList.remove('d-none');
+  btnText.classList.add('d-none');
+  processBtn.disabled = true;
+  clearButton.disabled = true;
+
+  const formData = new FormData(event.target);
+
+  try {
+    const response = await fetch(event.target.action, {
+      method: 'POST',
+      headers: { 'X-Requested-With': 'XMLHttpRequest' },
+      body: formData
+    });
+
+    let data = null;
+    try {
+      data = await response.json();
+    } catch (parseError) {
+      console.error('Error parsing JSON from server', parseError);
+      showMessage('error-message', '{{ gettext("Error parsing JSON from server") }}');
+    }
+
+    if (response.ok) {
+      if (data) {
+        handleStatus(data);
+        if (data.status === 'processing') {
+          clearInterval(pollingInterval);
+          pollingInterval = setInterval(checkStatus, POLLING_INTERVAL);
+        }
+      } else {
+        showMessage('error-message', '{{ gettext("Unexpected empty response") }}');
+      }
+    } else {
+      if (data && data.status === 'error') {
+        handleStatus(data);
+      } else {
+        showMessage('error-message', data?.error || '{{ gettext("Error during processing") }}');
+      }
+    }
+  } catch (error) {
+    console.error(error);
+    showMessage('error-message', '{{ gettext("Network or server error") }}');
+  } finally {
+    spinner.classList.add('d-none');
+    btnText.classList.remove('d-none');
+  }
+});
+
+clearButton.addEventListener('click', () => {
+  clearFormFields();
+  saveFormValues();
+});
+</script>
+{% endblock %}

@@ -1,0 +1,521 @@
+
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2026-03-16 13:44+0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: app.py:66 templates/dashboard.html:3
+msgid "Dashboard"
+msgstr "Dashboard"
+
+#: app.py:70 templates/login.html:5 templates/login.html:15
+msgid "Login"
+msgstr "Login"
+
+#: app.py:72 templates/base.html:111
+msgid "Logout"
+msgstr "Logout"
+
+#: app.py:75
+msgid "Create user"
+msgstr "Create user"
+
+#: app.py:77
+msgid "Edit user"
+msgstr "Edit user"
+
+#: app.py:79
+msgid "Admin panel"
+msgstr "Admin panel"
+
+#: app.py:81
+msgid "Analytics Toolkit Demo"
+msgstr "Analytics Toolkit Demo"
+
+#: app.py:83 app.py:85
+#, fuzzy
+msgid "name"
+msgstr "Username"
+
+#: admin/routes.py:181
+msgid "Username, password and show_name are required."
+msgstr "Username, password and show_name are required."
+
+#: admin/routes.py:185
+#, python-brace-format
+msgid "User '{show_name}' created."
+msgstr "User '{show_name}' created."
+
+#: admin/routes.py:194
+msgid "Cannot delete the currently logged-in admin."
+msgstr "Cannot delete the currently logged-in admin."
+
+#: admin/routes.py:200
+#, python-brace-format
+msgid "User '{deleted_username}' deleted."
+msgstr "User '{deleted_username}' deleted."
+
+#: admin/routes.py:206 admin/routes.py:216
+msgid "User not found."
+msgstr "User not found."
+
+#: admin/routes.py:222
+msgid "Password updated."
+msgstr "Password updated."
+
+#: admin/routes.py:226
+msgid "Show name cannot be empty."
+msgstr "Show name cannot be empty."
+
+#: admin/routes.py:245
+#, python-brace-format
+msgid "User '{show_name}' updated."
+msgstr "User '{show_name}' updated."
+
+#: admin/routes.py:251
+msgid "Error updating user."
+msgstr "Error updating user."
+
+#: app_functions/document_builder.py:73
+msgid "Reference ID must be a number"
+msgstr "Reference ID must be a number"
+
+#: app_functions/document_builder.py:127
+#: app_functions/transaction_lookup.py:187
+msgid "File not found."
+msgstr "File not found."
+
+#: app_functions/transaction_lookup.py:63
+msgid "Invalid date format"
+msgstr "Invalid date format"
+
+#: app_functions/transaction_lookup.py:66
+msgid "End date is earlier than start date"
+msgstr "End date is earlier than start date"
+
+#: app_functions/transaction_lookup.py:70
+msgid "Date range must not exceed 3 months"
+msgstr "Date range must not exceed 3 months"
+
+#: app_functions/transaction_lookup.py:78
+msgid "Reference ID is required"
+msgstr "Reference ID is required"
+
+#: app_functions/transaction_lookup.py:83
+msgid "Reference ID must be at least 5 characters long"
+msgstr "Reference ID must be at least 5 characters long"
+
+#: app_functions/transaction_lookup.py:90
+msgid "Excel file is required"
+msgstr "Excel file is required"
+
+#: app_functions/transaction_lookup.py:107
+#, python-brace-format
+msgid "Max {rows_count} rows allowed"
+msgstr "Max {rows_count} rows allowed"
+
+#: app_functions/transaction_lookup.py:116
+msgid "Excel file must contain at least 1 reference ID"
+msgstr "Excel file must contain at least 1 reference ID"
+
+#: app_functions/transaction_lookup.py:123
+#, python-brace-format
+msgid "Error reading Excel: {err_text}"
+msgstr "Error reading Excel: {err_text}"
+
+#: auth/routes.py:44
+msgid "Welcome back, "
+msgstr "Welcome back, "
+
+#: auth/routes.py:47
+msgid "Invalid credentials"
+msgstr "Invalid credentials"
+
+#: auth/routes.py:56
+msgid "Logged out successfully"
+msgstr "Logged out successfully"
+
+#: templates/admin.html:40
+msgid "Admin Panel"
+msgstr "Admin Panel"
+
+#: templates/admin.html:43
+msgid "Filter by Username"
+msgstr "Filter by Username"
+
+#: templates/admin.html:44
+msgid "Enter username"
+msgstr "Enter username"
+
+#: templates/admin.html:55 templates/login.html:8
+msgid "Username"
+msgstr "Username"
+
+#: templates/admin.html:57 templates/admin.html:122 templates/edit_user.html:16
+msgid "Functions"
+msgstr "Functions"
+
+#: templates/admin.html:58
+msgid "Actions"
+msgstr "Actions"
+
+#: templates/admin.html:70
+msgid "Edit"
+msgstr "Edit"
+
+#: templates/admin.html:72
+msgid "Are you sure?"
+msgstr "Are you sure?"
+
+#: templates/admin.html:72
+msgid "Delete"
+msgstr "Delete"
+
+#: templates/admin.html:83
+msgid "Display"
+msgstr "Display"
+
+#: templates/admin.html:88
+msgid "users per page"
+msgstr "users per page"
+
+#: templates/admin.html:107
+msgid "Create New User"
+msgstr "Create New User"
+
+#: templates/admin.html:110
+msgid "Username (login)"
+msgstr "Username (login)"
+
+#: templates/admin.html:114 templates/login.html:12
+msgid "Password"
+msgstr "Password"
+
+#: templates/admin.html:118
+msgid "Show name (display)"
+msgstr "Show name (display)"
+
+#: templates/admin.html:133 templates/edit_user.html:27
+msgid "Make this user admin?"
+msgstr "Make this user admin?"
+
+#: templates/admin.html:136
+msgid "Create"
+msgstr "Create"
+
+#: templates/base.html:97
+msgid "Home"
+msgstr "Home"
+
+#: templates/base.html:105
+msgid "Admin"
+msgstr "Admin"
+
+#: templates/base.html:140
+msgid "You are logged in as"
+msgstr "You are logged in as"
+
+#: templates/dashboard.html:4
+msgid "Choose one of the available functions:"
+msgstr "Choose one of the available functions:"
+
+#: templates/dashboard.html:12
+msgid "Go"
+msgstr "Go"
+
+#: templates/document_builder.html:5 templates/transaction_lookup.html:5
+msgid "Back"
+msgstr "Back"
+
+#: templates/document_builder.html:7 templates/document_builder.html:9
+#: templates/transaction_lookup.html:7 templates/transaction_lookup.html:9
+msgid "Clear form"
+msgstr "Clear form"
+
+#: templates/document_builder.html:14 utils/globals.py:7
+msgid "Document Builder"
+msgstr "Document Builder"
+
+#: templates/document_builder.html:20 templates/document_builder.html:203
+#: templates/transaction_lookup.html:21 templates/transaction_lookup.html:259
+msgid "A process has started. Please wait..."
+msgstr "A process has started. Please wait..."
+
+#: templates/document_builder.html:37
+msgid "Select workspace"
+msgstr "Select workspace"
+
+#: templates/document_builder.html:39
+msgid "Workspace A"
+msgstr "Workspace A"
+
+#: templates/document_builder.html:40
+msgid "Workspace B"
+msgstr "Workspace B"
+
+#: templates/document_builder.html:44
+msgid "Select template"
+msgstr "Select template"
+
+#: templates/document_builder.html:52
+msgid "File format"
+msgstr "File format"
+
+#: templates/document_builder.html:54
+msgid "PDF"
+msgstr "PDF"
+
+#: templates/document_builder.html:55
+msgid "DOCX"
+msgstr "DOCX"
+
+#: templates/document_builder.html:59
+msgid "Reference ID"
+msgstr "Reference ID"
+
+#: templates/document_builder.html:66
+msgid "Approval code (optional)"
+msgstr "Approval code (optional)"
+
+#: templates/document_builder.html:70
+msgid "Network reference (optional)"
+msgstr "Network reference (optional)"
+
+#: templates/document_builder.html:74
+msgid "Retrieval reference (optional)"
+msgstr "Retrieval reference (optional)"
+
+#: templates/document_builder.html:78
+msgid "External order ID (optional)"
+msgstr "External order ID (optional)"
+
+#: templates/document_builder.html:86 templates/document_builder.html:91
+#: templates/transaction_lookup.html:67 templates/transaction_lookup.html:72
+msgid "Process"
+msgstr "Process"
+
+#: templates/document_builder.html:98
+msgid "Generated parameters"
+msgstr "Generated parameters"
+
+#: templates/document_builder.html:102
+msgid "Parameter"
+msgstr "Parameter"
+
+#: templates/document_builder.html:103
+msgid "Value"
+msgstr "Value"
+
+#: templates/document_builder.html:108
+msgid "Download file"
+msgstr "Download file"
+
+#: templates/document_builder.html:217
+msgid "No data found for the specified parameters"
+msgstr "No data found for the specified parameters"
+
+#: templates/document_builder.html:229 templates/transaction_lookup.html:285
+msgid "An error occurred"
+msgstr "An error occurred"
+
+#: templates/document_builder.html:346 templates/transaction_lookup.html:397
+msgid "Error parsing JSON from server"
+msgstr "Error parsing JSON from server"
+
+#: templates/document_builder.html:357 templates/transaction_lookup.html:408
+msgid "Unexpected empty response"
+msgstr "Unexpected empty response"
+
+#: templates/document_builder.html:363 templates/transaction_lookup.html:414
+msgid "Error during processing"
+msgstr "Error during processing"
+
+#: templates/document_builder.html:368 templates/transaction_lookup.html:419
+msgid "Network or server error"
+msgstr "Network or server error"
+
+#: templates/edit_user.html:3
+msgid "Edit User"
+msgstr "Edit User"
+
+#: templates/edit_user.html:7
+msgid "New Password (leave empty if not changing)"
+msgstr "New Password (leave empty if not changing)"
+
+#: templates/edit_user.html:12
+msgid "Show name"
+msgstr "Show name"
+
+#: templates/edit_user.html:30
+msgid "Save"
+msgstr "Save"
+
+#: templates/edit_user.html:31
+msgid "Cancel"
+msgstr "Cancel"
+
+#: templates/transaction_lookup.html:14 utils/globals.py:12
+msgid "Transaction Lookup"
+msgstr "Transaction Lookup"
+
+#: templates/transaction_lookup.html:15
+msgid "Choose how to provide references for lookup:"
+msgstr "Choose how to provide references for lookup:"
+
+#: templates/transaction_lookup.html:36
+msgid "Single reference ID"
+msgstr "Single reference ID"
+
+#: templates/transaction_lookup.html:40
+msgid "Multiple reference IDs from Excel (up to 50 IDs)"
+msgstr "Multiple reference IDs from Excel (up to 50 IDs)"
+
+#: templates/transaction_lookup.html:45
+msgid "Reference ID (at least 5 characters)"
+msgstr "Reference ID (at least 5 characters)"
+
+#: templates/transaction_lookup.html:50
+msgid "Upload Excel file (up to 50 IDs)"
+msgstr "Upload Excel file (up to 50 IDs)"
+
+#: templates/transaction_lookup.html:56
+msgid "Start date"
+msgstr "Start date"
+
+#: templates/transaction_lookup.html:60
+msgid "End date"
+msgstr "End date"
+
+#: templates/transaction_lookup.html:79
+msgid "Lookup results"
+msgstr "Lookup results"
+
+#: templates/transaction_lookup.html:80
+msgid "Download as Excel"
+msgstr "Download as Excel"
+
+#: templates/transaction_lookup.html:86
+msgid "Input reference"
+msgstr "Input reference"
+
+#: templates/transaction_lookup.html:87
+msgid "Workspace"
+msgstr "Workspace"
+
+#: templates/transaction_lookup.html:88
+msgid "Record ID"
+msgstr "Record ID"
+
+#: templates/transaction_lookup.html:89
+msgid "Created at"
+msgstr "Created at"
+
+#: templates/transaction_lookup.html:90
+msgid "Updated at"
+msgstr "Updated at"
+
+#: templates/transaction_lookup.html:91
+msgid "Route"
+msgstr "Route"
+
+#: templates/transaction_lookup.html:92
+msgid "Status"
+msgstr "Status"
+
+#: templates/transaction_lookup.html:93
+msgid "User ID"
+msgstr "User ID"
+
+#: templates/transaction_lookup.html:94
+msgid "User registered at"
+msgstr "User registered at"
+
+#: templates/transaction_lookup.html:95
+msgid "Currency"
+msgstr "Currency"
+
+#: templates/transaction_lookup.html:96
+msgid "Amount"
+msgstr "Amount"
+
+#: templates/transaction_lookup.html:97
+msgid "Amount USD"
+msgstr "Amount USD"
+
+#: templates/transaction_lookup.html:98
+msgid "Fee"
+msgstr "Fee"
+
+#: templates/transaction_lookup.html:99
+msgid "Fee USD"
+msgstr "Fee USD"
+
+#: templates/transaction_lookup.html:100
+msgid "Masked instrument"
+msgstr "Masked instrument"
+
+#: templates/transaction_lookup.html:101
+msgid "Source"
+msgstr "Source"
+
+#: templates/transaction_lookup.html:102
+msgid "Method"
+msgstr "Method"
+
+#: templates/transaction_lookup.html:103
+msgid "Source reference"
+msgstr "Source reference"
+
+#: templates/transaction_lookup.html:104
+msgid "Merchant account"
+msgstr "Merchant account"
+
+#: templates/transaction_lookup.html:105
+msgid "Gateway route"
+msgstr "Gateway route"
+
+#: templates/transaction_lookup.html:106
+msgid "Gateway account"
+msgstr "Gateway account"
+
+#: templates/transaction_lookup.html:107
+msgid "Source code"
+msgstr "Source code"
+
+#: templates/transaction_lookup.html:108
+msgid "Tenant account"
+msgstr "Tenant account"
+
+#: templates/transaction_lookup.html:109
+msgid "External reference"
+msgstr "External reference"
+
+#: templates/transaction_lookup.html:110
+msgid "External payment ID"
+msgstr "External payment ID"
+
+#: templates/transaction_lookup.html:251
+msgid "No matching data found"
+msgstr "No matching data found"
+
+#: templates/transaction_lookup.html:273
+msgid "No data found"
+msgstr "No data found"
+
+#: utils/globals.py:8
+msgid "Generate a client-ready document from a template and reference ID."
+msgstr "Generate a client-ready document from a template and reference ID."
+
+#: utils/globals.py:13
+msgid "Search records by reference IDs and export results to Excel."
+msgstr "Search records by reference IDs and export results to Excel."

@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h1>{{ gettext('Dashboard') }}</h1>
+    <p>{{ gettext('Choose one of the available functions:') }}</p>
+    <div class="row">
+        {% for func in available_functions %}
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ gettext(func.name) }}</h5>
+                        <p class="card-text">{{ gettext(func.description) }}</p>
+                        <a href="{{ url_for(func.endpoint) }}" class="btn btn-primary">{{ gettext('Go') }}</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
+{% block scripts %}
+{% endblock %}

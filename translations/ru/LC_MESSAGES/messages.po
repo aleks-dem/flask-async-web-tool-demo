@@ -1,0 +1,532 @@
+
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2026-03-16 13:44+0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: ru\n"
+"Language-Team: ru <LL@li.org>\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: app.py:66 templates/dashboard.html:3
+msgid "Dashboard"
+msgstr "Панель управления"
+
+#: app.py:70 templates/login.html:5 templates/login.html:15
+msgid "Login"
+msgstr "Вход"
+
+#: app.py:72 templates/base.html:111
+msgid "Logout"
+msgstr "Выход"
+
+#: app.py:75
+msgid "Create user"
+msgstr "Создать пользователя"
+
+#: app.py:77
+msgid "Edit user"
+msgstr "Редактировать пользователя"
+
+#: app.py:79
+msgid "Admin panel"
+msgstr "Панель администратора"
+
+#: app.py:81
+msgid "Analytics Toolkit Demo"
+msgstr "Демо аналитического инструментария"
+
+#: app.py:83 app.py:85
+#, fuzzy
+msgid "name"
+msgstr "Название"
+
+#: admin/routes.py:181
+msgid "Username, password and show_name are required."
+msgstr "Требуются username, password и show_name."
+
+#: admin/routes.py:185
+#, python-brace-format
+msgid "User '{show_name}' created."
+msgstr "Пользователь '{show_name}' создан."
+
+#: admin/routes.py:194
+msgid "Cannot delete the currently logged-in admin."
+msgstr "Нельзя удалить текущего авторизованного администратора."
+
+#: admin/routes.py:200
+#, python-brace-format
+msgid "User '{deleted_username}' deleted."
+msgstr "Пользователь '{deleted_username}' удалён."
+
+#: admin/routes.py:206 admin/routes.py:216
+msgid "User not found."
+msgstr "Пользователь не найден."
+
+#: admin/routes.py:222
+msgid "Password updated."
+msgstr "Пароль обновлён."
+
+#: admin/routes.py:226
+msgid "Show name cannot be empty."
+msgstr "Отображаемое имя не может быть пустым."
+
+#: admin/routes.py:245
+#, python-brace-format
+msgid "User '{show_name}' updated."
+msgstr "Пользователь '{show_name}' обновлён."
+
+#: admin/routes.py:251
+msgid "Error updating user."
+msgstr "Ошибка при обновлении пользователя."
+
+#: app_functions/document_builder.py:73
+msgid "Reference ID must be a number"
+msgstr "Reference ID должен быть числом"
+
+#: app_functions/document_builder.py:127
+#: app_functions/transaction_lookup.py:187
+msgid "File not found."
+msgstr "Файл не найден."
+
+#: app_functions/transaction_lookup.py:63
+msgid "Invalid date format"
+msgstr "Неверный формат даты"
+
+#: app_functions/transaction_lookup.py:66
+msgid "End date is earlier than start date"
+msgstr "Дата окончания раньше даты начала"
+
+#: app_functions/transaction_lookup.py:70
+msgid "Date range must not exceed 3 months"
+msgstr "Диапазон дат не должен превышать 3 месяца"
+
+#: app_functions/transaction_lookup.py:78
+msgid "Reference ID is required"
+msgstr "Требуется Reference ID"
+
+#: app_functions/transaction_lookup.py:83
+msgid "Reference ID must be at least 5 characters long"
+msgstr "Reference ID должен содержать минимум 5 символов"
+
+#: app_functions/transaction_lookup.py:90
+msgid "Excel file is required"
+msgstr "Требуется файл Excel"
+
+#: app_functions/transaction_lookup.py:107
+#, python-brace-format
+msgid "Max {rows_count} rows allowed"
+msgstr "Допустимо не более {rows_count} строк"
+
+#: app_functions/transaction_lookup.py:116
+msgid "Excel file must contain at least 1 reference ID"
+msgstr "Файл Excel должен содержать хотя бы один Reference ID"
+
+#: app_functions/transaction_lookup.py:123
+#, python-brace-format
+msgid "Error reading Excel: {err_text}"
+msgstr "Ошибка чтения Excel: {err_text}"
+
+#: auth/routes.py:44
+msgid "Welcome back, "
+msgstr "С возвращением, "
+
+#: auth/routes.py:47
+msgid "Invalid credentials"
+msgstr "Неверные учетные данные"
+
+#: auth/routes.py:56
+msgid "Logged out successfully"
+msgstr "Вы успешно вышли"
+
+#: templates/admin.html:40
+msgid "Admin Panel"
+msgstr "Панель администратора"
+
+#: templates/admin.html:43
+msgid "Filter by Username"
+msgstr "Фильтр по имени пользователя"
+
+#: templates/admin.html:44
+msgid "Enter username"
+msgstr "Введите имя пользователя"
+
+#: templates/admin.html:55 templates/login.html:8
+msgid "Username"
+msgstr "Имя пользователя"
+
+#: templates/admin.html:57 templates/admin.html:122 templates/edit_user.html:16
+msgid "Functions"
+msgstr "Функции"
+
+#: templates/admin.html:58
+msgid "Actions"
+msgstr "Действия"
+
+#: templates/admin.html:70
+msgid "Edit"
+msgstr "Редактировать"
+
+#: templates/admin.html:72
+msgid "Are you sure?"
+msgstr "Вы уверены?"
+
+#: templates/admin.html:72
+msgid "Delete"
+msgstr "Удалить"
+
+#: templates/admin.html:83
+msgid "Display"
+msgstr "Показывать"
+
+#: templates/admin.html:88
+msgid "users per page"
+msgstr "пользователей на странице"
+
+#: templates/admin.html:107
+msgid "Create New User"
+msgstr "Создать нового пользователя"
+
+#: templates/admin.html:110
+msgid "Username (login)"
+msgstr "Имя пользователя (логин)"
+
+#: templates/admin.html:114 templates/login.html:12
+msgid "Password"
+msgstr "Пароль"
+
+#: templates/admin.html:118
+msgid "Show name (display)"
+msgstr "Отображаемое имя"
+
+#: templates/admin.html:133 templates/edit_user.html:27
+msgid "Make this user admin?"
+msgstr "Сделать пользователя администратором?"
+
+#: templates/admin.html:136
+msgid "Create"
+msgstr "Создать"
+
+#: templates/base.html:97
+msgid "Home"
+msgstr "Главная"
+
+#: templates/base.html:105
+msgid "Admin"
+msgstr "Админ"
+
+#: templates/base.html:140
+msgid "You are logged in as"
+msgstr "Вы вошли как"
+
+#: templates/dashboard.html:4
+msgid "Choose one of the available functions:"
+msgstr "Выберите одну из доступных функций:"
+
+#: templates/dashboard.html:12
+msgid "Go"
+msgstr "Открыть"
+
+#: templates/document_builder.html:5 templates/transaction_lookup.html:5
+msgid "Back"
+msgstr "Назад"
+
+#: templates/document_builder.html:7 templates/document_builder.html:9
+#: templates/transaction_lookup.html:7 templates/transaction_lookup.html:9
+msgid "Clear form"
+msgstr "Очистить форму"
+
+#: templates/document_builder.html:14 utils/globals.py:7
+msgid "Document Builder"
+msgstr "Конструктор документов"
+
+#: templates/document_builder.html:20 templates/document_builder.html:203
+#: templates/transaction_lookup.html:21 templates/transaction_lookup.html:259
+msgid "A process has started. Please wait..."
+msgstr "Процесс запущен. Пожалуйста, подождите..."
+
+#: templates/document_builder.html:37
+msgid "Select workspace"
+msgstr "Выберите рабочее пространство"
+
+#: templates/document_builder.html:39
+msgid "Workspace A"
+msgstr "Рабочее пространство A"
+
+#: templates/document_builder.html:40
+msgid "Workspace B"
+msgstr "Рабочее пространство B"
+
+#: templates/document_builder.html:44
+msgid "Select template"
+msgstr "Выберите шаблон"
+
+#: templates/document_builder.html:52
+msgid "File format"
+msgstr "Формат файла"
+
+#: templates/document_builder.html:54
+msgid "PDF"
+msgstr "PDF"
+
+#: templates/document_builder.html:55
+msgid "DOCX"
+msgstr "DOCX"
+
+#: templates/document_builder.html:59
+msgid "Reference ID"
+msgstr "Идентификатор ссылки"
+
+#: templates/document_builder.html:66
+msgid "Approval code (optional)"
+msgstr "Код подтверждения (опционально)"
+
+#: templates/document_builder.html:70
+msgid "Network reference (optional)"
+msgstr "Сетевая ссылка (опционально)"
+
+#: templates/document_builder.html:74
+msgid "Retrieval reference (optional)"
+msgstr "Код Retrieval Reference (опционально)"
+
+#: templates/document_builder.html:78
+msgid "External order ID (optional)"
+msgstr "Внешний ID заказа (опционально)"
+
+#: templates/document_builder.html:86 templates/document_builder.html:91
+#: templates/transaction_lookup.html:67 templates/transaction_lookup.html:72
+msgid "Process"
+msgstr "Запустить"
+
+#: templates/document_builder.html:98
+msgid "Generated parameters"
+msgstr "Сгенерированные параметры"
+
+#: templates/document_builder.html:102
+msgid "Parameter"
+msgstr "Параметр"
+
+#: templates/document_builder.html:103
+msgid "Value"
+msgstr "Значение"
+
+#: templates/document_builder.html:108
+msgid "Download file"
+msgstr "Скачать файл"
+
+#: templates/document_builder.html:217
+msgid "No data found for the specified parameters"
+msgstr "По указанным параметрам данные не найдены"
+
+#: templates/document_builder.html:229 templates/transaction_lookup.html:285
+msgid "An error occurred"
+msgstr "Произошла ошибка"
+
+#: templates/document_builder.html:346 templates/transaction_lookup.html:397
+msgid "Error parsing JSON from server"
+msgstr "Ошибка разбора JSON с сервера"
+
+#: templates/document_builder.html:357 templates/transaction_lookup.html:408
+msgid "Unexpected empty response"
+msgstr "Неожиданно пустой ответ"
+
+#: templates/document_builder.html:363 templates/transaction_lookup.html:414
+msgid "Error during processing"
+msgstr "Ошибка во время обработки"
+
+#: templates/document_builder.html:368 templates/transaction_lookup.html:419
+msgid "Network or server error"
+msgstr "Ошибка сети или сервера"
+
+#: templates/edit_user.html:3
+msgid "Edit User"
+msgstr "Редактировать пользователя"
+
+#: templates/edit_user.html:7
+msgid "New Password (leave empty if not changing)"
+msgstr "Новый пароль (оставьте пустым, если не меняете)"
+
+#: templates/edit_user.html:12
+msgid "Show name"
+msgstr "Отображаемое имя"
+
+#: templates/edit_user.html:30
+msgid "Save"
+msgstr "Сохранить"
+
+#: templates/edit_user.html:31
+msgid "Cancel"
+msgstr "Отмена"
+
+#: templates/transaction_lookup.html:14 utils/globals.py:12
+msgid "Transaction Lookup"
+msgstr "Поиск транзакций"
+
+#: templates/transaction_lookup.html:15
+msgid "Choose how to provide references for lookup:"
+msgstr "Выберите способ передачи идентификаторов для поиска:"
+
+#: templates/transaction_lookup.html:36
+msgid "Single reference ID"
+msgstr "Один Reference ID"
+
+#: templates/transaction_lookup.html:40
+msgid "Multiple reference IDs from Excel (up to 50 IDs)"
+msgstr "Несколько Reference ID из Excel (до 50 ID)"
+
+#: templates/transaction_lookup.html:45
+msgid "Reference ID (at least 5 characters)"
+msgstr "Reference ID (не менее 5 символов)"
+
+#: templates/transaction_lookup.html:50
+msgid "Upload Excel file (up to 50 IDs)"
+msgstr "Загрузите Excel-файл (до 50 ID)"
+
+#: templates/transaction_lookup.html:56
+msgid "Start date"
+msgstr "Дата начала"
+
+#: templates/transaction_lookup.html:60
+msgid "End date"
+msgstr "Дата окончания"
+
+#: templates/transaction_lookup.html:79
+msgid "Lookup results"
+msgstr "Результаты поиска"
+
+#: templates/transaction_lookup.html:80
+msgid "Download as Excel"
+msgstr "Скачать как Excel"
+
+#: templates/transaction_lookup.html:86
+msgid "Input reference"
+msgstr "Входной Reference ID"
+
+#: templates/transaction_lookup.html:87
+msgid "Workspace"
+msgstr "Рабочее пространство"
+
+#: templates/transaction_lookup.html:88
+msgid "Record ID"
+msgstr "ID записи"
+
+#: templates/transaction_lookup.html:89
+msgid "Created at"
+msgstr "Создано"
+
+#: templates/transaction_lookup.html:90
+msgid "Updated at"
+msgstr "Обновлено"
+
+#: templates/transaction_lookup.html:91
+msgid "Route"
+msgstr "Маршрут"
+
+#: templates/transaction_lookup.html:92
+msgid "Status"
+msgstr "Статус"
+
+#: templates/transaction_lookup.html:93
+msgid "User ID"
+msgstr "ID пользователя"
+
+#: templates/transaction_lookup.html:94
+msgid "User registered at"
+msgstr "Дата регистрации пользователя"
+
+#: templates/transaction_lookup.html:95
+msgid "Currency"
+msgstr "Валюта"
+
+#: templates/transaction_lookup.html:96
+msgid "Amount"
+msgstr "Сумма"
+
+#: templates/transaction_lookup.html:97
+msgid "Amount USD"
+msgstr "Сумма в USD"
+
+#: templates/transaction_lookup.html:98
+msgid "Fee"
+msgstr "Комиссия"
+
+#: templates/transaction_lookup.html:99
+msgid "Fee USD"
+msgstr "Комиссия в USD"
+
+#: templates/transaction_lookup.html:100
+msgid "Masked instrument"
+msgstr "Маскированный инструмент"
+
+#: templates/transaction_lookup.html:101
+msgid "Source"
+msgstr "Источник"
+
+#: templates/transaction_lookup.html:102
+msgid "Method"
+msgstr "Метод"
+
+#: templates/transaction_lookup.html:103
+msgid "Source reference"
+msgstr "Ссылка источника"
+
+#: templates/transaction_lookup.html:104
+msgid "Merchant account"
+msgstr "Аккаунт мерчанта"
+
+#: templates/transaction_lookup.html:105
+msgid "Gateway route"
+msgstr "Маршрут шлюза"
+
+#: templates/transaction_lookup.html:106
+msgid "Gateway account"
+msgstr "Аккаунт шлюза"
+
+#: templates/transaction_lookup.html:107
+msgid "Source code"
+msgstr "Код источника"
+
+#: templates/transaction_lookup.html:108
+msgid "Tenant account"
+msgstr "Аккаунт тенанта"
+
+#: templates/transaction_lookup.html:109
+msgid "External reference"
+msgstr "Внешняя ссылка"
+
+#: templates/transaction_lookup.html:110
+msgid "External payment ID"
+msgstr "Внешний ID платежа"
+
+#: templates/transaction_lookup.html:251
+msgid "No matching data found"
+msgstr "Совпадающие данные не найдены"
+
+#: templates/transaction_lookup.html:273
+msgid "No data found"
+msgstr "Данные не найдены"
+
+#: utils/globals.py:8
+msgid "Generate a client-ready document from a template and reference ID."
+msgstr "Сформировать готовый для клиента документ из шаблона и Reference ID."
+
+#: utils/globals.py:13
+msgid "Search records by reference IDs and export results to Excel."
+msgstr "Искать записи по Reference ID и экспортировать результаты в Excel."
+
+
+msgid "Username '{username}' already exists."
+msgstr "Username '{username}' уже существует."
+
+msgid "CSRF token is missing or invalid. Refresh the page and try again."
+msgstr "CSRF-токен отсутствует или некорректен. Обновите страницу и попробуйте снова."
+
+msgid "Forbidden"
+msgstr "Доступ запрещён"

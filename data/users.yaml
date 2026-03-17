@@ -1,0 +1,16 @@
+user_1001:
+- functions:
+  - document_builder
+  - transaction_lookup
+  is_admin: 1
+  password: scrypt:32768:8:1$UfsSCv2UF53P5rl5$bfcfa5add82c153a8aaf7830ca455f85bb291a068aed5cf2858c16cefd5069e2da2257ef065e128ff57f99e1c70bb3bd7644a9f47d5f574da11bc7b62d5e86b9
+  show_name: Demo Admin
+  username: admin
+user_1002:
+- functions:
+  - document_builder
+  - transaction_lookup
+  is_admin: 0
+  password: scrypt:32768:8:1$tD8DvnBCvtoVQGhw$fedfe72ecdf6441dd9d031f237adb04f4734eaee6c66275b019ba721ef04fba245ec461de942cd077204f399e6f43dfb5714535129cf4cf6c83c65aeb8e27858
+  show_name: Demo Analyst
+  username: analyst

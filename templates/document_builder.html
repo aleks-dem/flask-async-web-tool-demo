@@ -1,0 +1,382 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row">
+  <div class="col-auto" style="width: 120px; min-width: 120px;">
+    <a href="{{ back_url }}" class="btn btn-secondary mb-3 w-100">{{ gettext('Back') }}</a>
+    {% if is_processing %}
+      <button type="button" id="clear-form-btn" class="btn btn-warning w-100" disabled>{{ gettext('Clear form') }}</button>
+    {% else %}
+      <button type="button" id="clear-form-btn" class="btn btn-warning w-100">{{ gettext('Clear form') }}</button>
+    {% endif %}
+  </div>
+
+  <div class="col ms-5">
+    <h3>{{ gettext('Document Builder') }}</h3>
+
+    <div id="no-data-message" class="alert alert-warning d-none"></div>
+    <div id="error-message" class="alert alert-danger d-none"></div>
+
+    {% if is_processing %}
+      <div id="processing-message" class="alert alert-info">{{ gettext('A process has started. Please wait...') }}</div>
+      <div class="progress mb-3" id="progress-container">
+        <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width: {{ percentage }}%;" id="progress-bar">
+          {{ percentage }}%
+        </div>
+      </div>
+    {% else %}
+      <div id="processing-message" class="alert alert-info d-none"></div>
+      <div class="progress mb-3 d-none" id="progress-container">
+        <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width: 0%;" id="progress-bar">0%</div>
+      </div>
+    {% endif %}
+
+    <form method="POST" id="document-builder-form" action="{{ url_for('document_builder.build_document') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="row">
+        <div class="col-12 col-md-6">
+          <div class="mb-3">
+            <label for="workspace" class="form-label">{{ gettext('Select workspace') }}</label>
+            <select name="workspace" id="workspace" class="form-select" required>
+              <option value="workspace_a">{{ gettext('Workspace A') }}</option>
+              <option value="workspace_b">{{ gettext('Workspace B') }}</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="template" class="form-label">{{ gettext('Select template') }}</label>
+            <select name="template" id="template" class="form-select" required>
+              {% for t in templates %}
+                <option value="{{ t }}">{{ t }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="file_format" class="form-label">{{ gettext('File format') }}</label>
+            <select name="file_format" id="file_format" class="form-select" required>
+              <option value="pdf">{{ gettext('PDF') }}</option>
+              <option value="docx">{{ gettext('DOCX') }}</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="reference_id" class="form-label">{{ gettext('Reference ID') }}</label>
+            <input type="number" name="reference_id" id="reference_id" class="form-control" min="1" required>
+          </div>
+        </div>
+
+        <div class="col-12 col-md-6">
+          <div class="mb-3">
+            <label for="approval_code" class="form-label">{{ gettext('Approval code (optional)') }}</label>
+            <input type="text" name="approval_code" id="approval_code" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label for="network_reference" class="form-label">{{ gettext('Network reference (optional)') }}</label>
+            <input type="text" name="network_reference" id="network_reference" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label for="retrieval_reference" class="form-label">{{ gettext('Retrieval reference (optional)') }}</label>
+            <input type="text" name="retrieval_reference" id="retrieval_reference" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label for="external_order_id" class="form-label">{{ gettext('External order ID (optional)') }}</label>
+            <input type="text" name="external_order_id" id="external_order_id" class="form-control">
+          </div>
+        </div>
+      </div>
+
+      {% if is_processing %}
+        <button type="submit" class="btn btn-primary" id="process-btn" disabled>
+          <span id="process-btn-text" class="d-none">{{ gettext('Process') }}</span>
+          <span id="process-btn-spinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        </button>
+      {% else %}
+        <button type="submit" class="btn btn-primary" id="process-btn">
+          <span id="process-btn-text">{{ gettext('Process') }}</span>
+          <span id="process-btn-spinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+        </button>
+      {% endif %}
+    </form>
+
+    <div id="parameters-container" class="mt-4 d-none">
+      <h4>{{ gettext('Generated parameters') }}</h4>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>{{ gettext('Parameter') }}</th>
+            <th>{{ gettext('Value') }}</th>
+          </tr>
+        </thead>
+        <tbody id="parameters-table"></tbody>
+      </table>
+      <button class="btn btn-success mt-3" id="download-btn" style="display: none;">{{ gettext('Download file') }}</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const functionKey = 'document_builder';
+const POLLING_INTERVAL = 2000;
+let pollingInterval = null;
+
+const button = document.getElementById('process-btn');
+const btnText = document.getElementById('process-btn-text');
+const spinner = document.getElementById('process-btn-spinner');
+const clearButton = document.getElementById('clear-form-btn');
+
+function showMessage(elemId, text) {
+  const elem = document.getElementById(elemId);
+  elem.textContent = text;
+  elem.classList.remove('d-none');
+}
+
+function hideMessage(elemId) {
+  document.getElementById(elemId).classList.add('d-none');
+}
+
+function showProgressBar() {
+  document.getElementById('progress-container').classList.remove('d-none');
+}
+
+function hideProgressBar() {
+  document.getElementById('progress-container').classList.add('d-none');
+}
+
+function updateProgressBar(value) {
+  const bar = document.getElementById('progress-bar');
+  bar.style.width = value + '%';
+  bar.textContent = value + '%';
+}
+
+function resetParametersView() {
+  document.getElementById('parameters-container').classList.add('d-none');
+  document.getElementById('parameters-table').innerHTML = '';
+  document.getElementById('download-btn').style.display = 'none';
+}
+
+function restorePageState(parameters, fileUrl) {
+  const parametersContainer = document.getElementById('parameters-container');
+  const parametersTable = document.getElementById('parameters-table');
+  const downloadButton = document.getElementById('download-btn');
+
+  parametersContainer.classList.remove('d-none');
+  parametersTable.innerHTML = '';
+
+  parameters.forEach(param => {
+    const row = `<tr><td>${param.name}</td><td>${param.value}</td></tr>`;
+    parametersTable.insertAdjacentHTML('beforeend', row);
+  });
+
+  if (fileUrl) {
+    downloadButton.style.display = 'block';
+    downloadButton.onclick = () => {
+      window.location.href = fileUrl;
+      resetParametersView();
+      clearTextFields();
+      saveFormValuesToLocalStorage();
+    };
+  }
+}
+
+function handleStatus(statusData) {
+  const status = statusData.status;
+  const progressValue = statusData.progress !== undefined ? statusData.progress : 0;
+
+  switch (status) {
+    case 'completed':
+      hideMessage('processing-message');
+      hideMessage('no-data-message');
+      hideMessage('error-message');
+      hideProgressBar();
+      resetParametersView();
+      spinner.classList.add('d-none');
+      btnText.classList.remove('d-none');
+      button.disabled = false;
+      clearButton.disabled = false;
+      if (statusData.parameters) {
+        restorePageState(statusData.parameters, statusData.file_url);
+      }
+      break;
+
+    case 'processing':
+      hideMessage('no-data-message');
+      hideMessage('error-message');
+      resetParametersView();
+      showMessage('processing-message', '{{ gettext("A process has started. Please wait...") }}');
+      showProgressBar();
+      updateProgressBar(progressValue);
+      spinner.classList.remove('d-none');
+      btnText.classList.add('d-none');
+      button.disabled = true;
+      clearButton.disabled = true;
+      break;
+
+    case 'no_data':
+      hideMessage('processing-message');
+      hideMessage('error-message');
+      hideProgressBar();
+      resetParametersView();
+      showMessage('no-data-message', statusData.message || '{{ gettext("No data found for the specified parameters") }}');
+      spinner.classList.add('d-none');
+      btnText.classList.remove('d-none');
+      button.disabled = false;
+      clearButton.disabled = false;
+      break;
+
+    case 'error':
+      hideMessage('processing-message');
+      hideMessage('no-data-message');
+      hideProgressBar();
+      resetParametersView();
+      showMessage('error-message', statusData.error || '{{ gettext("An error occurred") }}');
+      spinner.classList.add('d-none');
+      btnText.classList.remove('d-none');
+      button.disabled = false;
+      clearButton.disabled = false;
+      break;
+
+    default:
+      hideMessage('processing-message');
+      hideMessage('no-data-message');
+      hideMessage('error-message');
+      hideProgressBar();
+      resetParametersView();
+      spinner.classList.add('d-none');
+      btnText.classList.remove('d-none');
+      button.disabled = false;
+      clearButton.disabled = false;
+      break;
+  }
+}
+
+async function checkStatus() {
+  try {
+    const response = await fetch(`/document_builder/status/${functionKey}`);
+    const statusData = await response.json();
+    handleStatus(statusData);
+
+    if (statusData.status !== 'processing') {
+      clearInterval(pollingInterval);
+    }
+  } catch (error) {
+    console.error(error);
+    clearInterval(pollingInterval);
+  }
+}
+
+function clearTextFields() {
+  document.getElementById('reference_id').value = '';
+  document.getElementById('approval_code').value = '';
+  document.getElementById('network_reference').value = '';
+  document.getElementById('retrieval_reference').value = '';
+  document.getElementById('external_order_id').value = '';
+}
+
+function saveFormValuesToLocalStorage() {
+  const formValues = {
+    workspace: document.getElementById('workspace').value,
+    template: document.getElementById('template').value,
+    file_format: document.getElementById('file_format').value,
+    reference_id: document.getElementById('reference_id').value,
+    approval_code: document.getElementById('approval_code').value,
+    network_reference: document.getElementById('network_reference').value,
+    retrieval_reference: document.getElementById('retrieval_reference').value,
+    external_order_id: document.getElementById('external_order_id').value
+  };
+  localStorage.setItem('documentBuilderFormValues', JSON.stringify(formValues));
+}
+
+function loadFormValuesFromLocalStorage() {
+  const savedValues = JSON.parse(localStorage.getItem('documentBuilderFormValues'));
+  if (!savedValues) return;
+
+  document.getElementById('workspace').value = savedValues.workspace || 'workspace_a';
+  document.getElementById('template').value = savedValues.template || '';
+  document.getElementById('file_format').value = savedValues.file_format || 'pdf';
+  document.getElementById('reference_id').value = savedValues.reference_id || '';
+  document.getElementById('approval_code').value = savedValues.approval_code || '';
+  document.getElementById('network_reference').value = savedValues.network_reference || '';
+  document.getElementById('retrieval_reference').value = savedValues.retrieval_reference || '';
+  document.getElementById('external_order_id').value = savedValues.external_order_id || '';
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  loadFormValuesFromLocalStorage();
+
+  try {
+    const response = await fetch(`/document_builder/status/${functionKey}`);
+    const statusData = await response.json();
+    handleStatus(statusData);
+
+    if (statusData.status === 'processing') {
+      pollingInterval = setInterval(checkStatus, POLLING_INTERVAL);
+    }
+  } catch (error) {
+    console.error('Error checking status on page load:', error);
+  }
+});
+
+document.getElementById('document-builder-form').addEventListener('submit', async event => {
+  event.preventDefault();
+
+  hideMessage('no-data-message');
+  hideMessage('error-message');
+  hideMessage('processing-message');
+  hideProgressBar();
+  resetParametersView();
+
+  saveFormValuesToLocalStorage();
+
+  btnText.classList.add('d-none');
+  spinner.classList.remove('d-none');
+  button.disabled = true;
+  clearButton.disabled = true;
+
+  const formData = new FormData(event.target);
+
+  try {
+    const response = await fetch(event.target.action, {
+      method: 'POST',
+      headers: { 'X-Requested-With': 'XMLHttpRequest' },
+      body: formData
+    });
+
+    let data = null;
+    try {
+      data = await response.json();
+    } catch (parseError) {
+      console.error('Error parsing JSON from server', parseError);
+      showMessage('error-message', '{{ gettext("Error parsing JSON from server") }}');
+    }
+
+    if (response.ok) {
+      if (data) {
+        handleStatus(data);
+        if (data.status === 'processing') {
+          clearInterval(pollingInterval);
+          pollingInterval = setInterval(checkStatus, POLLING_INTERVAL);
+        }
+      } else {
+        showMessage('error-message', '{{ gettext("Unexpected empty response") }}');
+      }
+    } else {
+      if (data && data.status === 'error') {
+        handleStatus(data);
+      } else {
+        showMessage('error-message', data?.error || '{{ gettext("Error during processing") }}');
+      }
+    }
+  } catch (error) {
+    console.error(error);
+    showMessage('error-message', '{{ gettext("Network or server error") }}');
+  } finally {
+    spinner.classList.add('d-none');
+    btnText.classList.remove('d-none');
+  }
+});
+
+document.getElementById('clear-form-btn').addEventListener('click', () => {
+  clearTextFields();
+  saveFormValuesToLocalStorage();
+});
+</script>
+{% endblock %}

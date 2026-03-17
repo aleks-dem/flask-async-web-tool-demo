@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>{{ gettext('Edit User') }}: {{ user_data.username }}</h2>
+
+<form method="POST" action="{{ url_for('admin_bp.edit_user', user_id=user_id) }}">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <div class="mb-3">
+    <label for="new_password" class="form-label">{{ gettext('New Password (leave empty if not changing)') }}</label>
+    <input type="password" name="new_password" id="new_password" class="form-control">
+  </div>
+
+  <div class="mb-3">
+    <label for="show_name" class="form-label">{{ gettext('Show name') }}</label>
+    <input type="text" name="show_name" id="show_name" class="form-control" value="{{ user_data.show_name }}" required>
+  </div>
+
+  <label class="form-label">{{ gettext('Functions') }}</label><br>
+  {% for func_key, func_info in function_details.items() %}
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" name="functions" value="{{ func_key }}" id="f_{{ func_key }}" {% if func_key in user_data.functions %}checked{% endif %}>
+      <label class="form-check-label" for="f_{{ func_key }}">{{ gettext(func_info['name']) }}</label>
+    </div>
+  {% endfor %}
+  <br>
+
+  <div class="form-check mb-3">
+    <input class="form-check-input" type="checkbox" name="is_admin" id="is_admin" {% if user_data.is_admin == 1 %}checked{% endif %}>
+    <label class="form-check-label" for="is_admin">{{ gettext('Make this user admin?') }}</label>
+  </div>
+
+  <button type="submit" class="btn btn-primary">{{ gettext('Save') }}</button>
+  <a href="{{ url_for('admin_bp.admin_panel') }}" class="btn btn-secondary">{{ gettext('Cancel') }}</a>
+</form>
+{% endblock %}
+{% block scripts %}{% endblock %}

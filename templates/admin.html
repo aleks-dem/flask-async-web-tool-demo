@@ -1,0 +1,320 @@
+{% extends 'base.html' %}
+{% set total_pages = total_pages|default(1) %}
+{% set current_page = current_page|default(1) %}
+{% set per_page = per_page|default(10) %}
+
+{% block styles %}
+<style>
+  .table-wrapper {
+    display: block;
+    height: 340px !important;
+    overflow-y: auto;
+  }
+  .table-fixed {
+    table-layout: fixed;
+    width: 100%;
+  }
+  .table-fixed td:nth-child(5),
+  .table-fixed th:nth-child(5) {
+    text-align: center;
+  }
+  .badge {
+    margin-right: 0.25rem;
+  }
+  .table-fixed th,
+  .table-fixed td {
+    white-space: normal;
+    word-wrap: break-word;
+  }
+  th[data-col] a[data-sort],
+  .pagination .page-link {
+    cursor: pointer;
+  }
+  .table-fixed .badge:not(:last-child) {
+    margin-right: .25rem;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<h2>{{ gettext('Admin Panel') }}</h2>
+
+<div class="mb-3">
+  <label for="filter-username" class="form-label">{{ gettext('Filter by Username') }}</label>
+  <input type="text" id="filter-username" class="form-control" placeholder="{{ gettext('Enter username') }}" value="{{ q }}" autocomplete="off">
+</div>
+
+<div class="table-wrapper" style="height:340px!important; min-height:340px!important; max-height:340px!important; overflow-y:auto;">
+  <table class="table table-bordered table-fixed" style="width:100%;">
+    <colgroup>
+      <col style="width:12%"><col style="width:15%"><col style="width:8%"><col style="width:50%"><col style="width:15%">
+    </colgroup>
+    <thead class="text-center">
+      <tr>
+        <th data-col="user_id"><a href="#" data-sort="user_id" class="d-inline-block w-100 py-2 text-center">ID</a></th>
+        <th data-col="username"><a href="#" data-sort="username" class="d-inline-block w-100 py-2 text-center">{{ gettext('Username') }}</a></th>
+        <th data-col="is_admin"><a href="#" data-sort="is_admin" class="d-inline-block w-100 py-2 text-center">is_admin</a></th>
+        <th data-col="functions"><a href="#" data-sort="functions" class="d-inline-block w-100 py-2 text-center">{{ gettext('Functions') }}</a></th>
+        <th>{{ gettext('Actions') }}</th>
+      </tr>
+    </thead>
+    <tbody id="users-tbody">
+      {% for uid,data in all_users %}
+        {% set u = data[0] %}
+        <tr>
+          <td>{{ uid }}</td>
+          <td>{{ u.username }}</td>
+          <td>{{ 1 if u.is_admin else 0 }}</td>
+          <td>{% for f in u.functions %}<span class="badge bg-primary">{{ f }}</span>{% endfor %}</td>
+          <td>
+            <a class="btn btn-warning btn-sm" href="{{ url_for('admin_bp.edit_user', user_id=uid) }}">{{ gettext('Edit') }}</a>
+            <form method="POST" style="display:inline" action="{{ url_for('admin_bp.delete_user', user_id=uid) }}">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button class="btn btn-danger btn-sm" onclick="return confirm('{{ gettext('Are you sure?') }}')">{{ gettext('Delete') }}</button>
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div class="d-flex justify-content-between align-items-center my-3">
+  <div>
+    <label for="per-page-select">{{ gettext('Display') }}</label>
+    <select id="per-page-select" class="form-select d-inline-block w-auto ms-1">
+      {% for n in (5,10,20,50) %}
+        <option value="{{ n }}" {% if per_page==n %}selected{% endif %}>{{ n }}</option>
+      {% endfor %}
+    </select> {{ gettext('users per page') }}
+  </div>
+
+  <nav aria-label="Pagination">
+    <ul id="pagination-ul" class="pagination mb-0">
+      {% for p in page_numbers %}
+        {% if p %}
+          <li class="page-item {% if p==current_page %}active{% endif %}">
+            <a href="{{ url_for('admin_bp.admin_panel', page=p, per_page=per_page, q=q, sort_column=sort_column, sort_direction=sort_direction) }}" class="page-link" data-page="{{ p }}">{{ p }}</a>
+          </li>
+        {% else %}
+          <li class="page-item disabled"><span class="page-link">…</span></li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+  </nav>
+</div>
+<hr>
+
+<h3>{{ gettext('Create New User') }}</h3>
+<form method="POST" action="{{ url_for('admin_bp.create_user') }}">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <div class="mb-3">
+    <label for="username" class="form-label">{{ gettext('Username (login)') }}</label>
+    <input type="text" name="username" id="username" class="form-control" required>
+  </div>
+  <div class="mb-3">
+    <label for="password" class="form-label">{{ gettext('Password') }}</label>
+    <input type="text" name="password" id="password" class="form-control" required>
+  </div>
+  <div class="mb-3">
+    <label for="show_name" class="form-label">{{ gettext('Show name (display)') }}</label>
+    <input type="text" name="show_name" id="show_name" class="form-control" required>
+  </div>
+
+  <label class="form-label">{{ gettext('Functions') }}</label><br>
+  {% for func_key, func_info in function_details.items() %}
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" name="functions" value="{{ func_key }}" id="f_{{ func_key }}">
+      <label class="form-check-label" for="f_{{ func_key }}">{{ gettext(func_info['name']) }}</label>
+    </div>
+  {% endfor %}
+  <br>
+
+  <div class="form-check mb-3">
+    <input class="form-check-input" type="checkbox" name="is_admin" id="is_admin">
+    <label class="form-check-label" for="is_admin">{{ gettext('Make this user admin?') }}</label>
+  </div>
+
+  <button type="submit" class="btn btn-success">{{ gettext('Create') }}</button>
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  (function () {
+    const apiURL = "{{ url_for('admin_bp.api_users') }}";
+    const csrfToken = "{{ csrf_token() }}";
+
+    const state = {
+      q: "{{ q|e }}",
+      page: {{ current_page }},
+      per_page: {{ per_page }},
+      sort_column: "{{ sort_column|e }}",
+      sort_direction: "{{ sort_direction|e }}"
+    };
+
+    const inputQ = document.getElementById('filter-username');
+    const tbody = document.getElementById('users-tbody');
+    const selPP = document.getElementById('per-page-select');
+    const pagUl = document.getElementById('pagination-ul');
+    const sortLinks = document.querySelectorAll('th[data-col] a[data-sort]');
+
+    function td(html) {
+      const el = document.createElement('td');
+      el.innerHTML = html;
+      return el;
+    }
+
+    function renderTable(users) {
+      while (tbody.firstChild) tbody.removeChild(tbody.firstChild);
+      users.forEach(function (u) {
+        const tr = document.createElement('tr');
+        tr.appendChild(td(u.id));
+        tr.appendChild(td(u.username));
+        tr.appendChild(td(u.is_admin));
+        tr.appendChild(td(u.functions.map(function (f) {
+          return '<span class="badge bg-primary">' + f + '</span>';
+        }).join('')));
+        tr.appendChild(td(
+          '<a class="btn btn-warning btn-sm" href="/admin/edit_user/' + u.id + '">Edit</a> ' +
+          '<form method="POST" action="/admin/delete_user/' + u.id + '" style="display:inline">' +
+          '<input type="hidden" name="csrf_token" value="' + csrfToken + '">' +
+          '<button class="btn btn-danger btn-sm" onclick="return confirm(\'Are you sure?\')">Delete</button></form>'
+        ));
+        tbody.appendChild(tr);
+      });
+    }
+
+    function pageWindow(tp, cp) {
+      const w = 2;
+      const arr = [];
+      if (tp <= 7) {
+        for (let i = 1; i <= tp; i += 1) arr.push(i);
+        return arr;
+      }
+      arr.push(1);
+      if (cp - w > 2) arr.push(null);
+      const s = Math.max(2, cp - w);
+      const e = Math.min(tp - 1, cp + w);
+      for (let i = s; i <= e; i += 1) arr.push(i);
+      if (e < tp - 1) arr.push(null);
+      arr.push(tp);
+      return arr;
+    }
+
+    function renderPagination(tp, cp) {
+      pagUl.innerHTML = '';
+      pageWindow(tp, cp).forEach(function (p) {
+        const li = document.createElement('li');
+        if (p) {
+          li.className = 'page-item' + (p === cp ? ' active' : '');
+          li.innerHTML = '<a class="page-link" data-page="' + p + '">' + p + '</a>';
+        } else {
+          li.className = 'page-item disabled';
+          li.innerHTML = '<span class="page-link">…</span>';
+        }
+        pagUl.appendChild(li);
+      });
+    }
+
+    function markSort() {
+      Array.prototype.forEach.call(sortLinks, function (link) {
+        if (!link.dataset.baseLabel) {
+          link.dataset.baseLabel = link.textContent.trim();
+        }
+        const col = link.dataset.sort;
+        const suffix = state.sort_column === col
+          ? (state.sort_direction === 'asc' ? ' ▲' : ' ▼')
+          : '';
+        link.textContent = link.dataset.baseLabel + suffix;
+      });
+    }
+
+    let timer;
+    function fetchAndRender() {
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        const url = apiURL + '?' + Object.keys(state).map(function (k) {
+          return encodeURIComponent(k) + '=' + encodeURIComponent(state[k]);
+        }).join('&');
+
+        fetch(url, { credentials: 'include' })
+          .then(function (r) {
+            if (!r.ok) throw new Error(r.statusText);
+            return r.json();
+          })
+          .then(function (data) {
+            renderTable(data.users);
+            renderPagination(data.total_pages, data.current_page);
+            markSort();
+            state.page = data.current_page;
+            history.replaceState(null, '', location.pathname + '?' + Object.keys(state).map(function (k) {
+              return encodeURIComponent(k) + '=' + encodeURIComponent(state[k]);
+            }).join('&'));
+          })
+          .catch(function (err) {
+            console.error('fetch error:', err);
+          });
+      }, 250);
+    }
+
+    let debounce;
+    inputQ.addEventListener('input', function (event) {
+      clearTimeout(debounce);
+      debounce = setTimeout(function () {
+        state.q = event.target.value.trim();
+        state.page = 1;
+        fetchAndRender();
+      }, 300);
+    });
+
+    selPP.addEventListener('change', function (event) {
+      state.per_page = Number(event.target.value) || 10;
+      state.page = 1;
+      fetchAndRender();
+    });
+
+    pagUl.addEventListener('click', function (event) {
+      let a = event.target;
+      while (a && !a.dataset.page) a = a.parentElement;
+      if (!a) return;
+      event.preventDefault();
+      state.page = Number(a.dataset.page);
+      fetchAndRender();
+    });
+
+    Array.prototype.forEach.call(sortLinks, function (link) {
+      link.addEventListener('click', function (event) {
+        event.preventDefault();
+        const col = link.dataset.sort;
+        if (state.sort_column === col) {
+          state.sort_direction = state.sort_direction === 'asc' ? 'desc' : 'asc';
+        } else {
+          state.sort_column = col;
+          state.sort_direction = 'asc';
+        }
+        state.page = 1;
+        fetchAndRender();
+      });
+    });
+
+    localStorage.setItem('admin_q', state.q);
+    localStorage.setItem('admin_sort', state.sort_column);
+    localStorage.setItem('admin_dir', state.sort_direction);
+
+    const savedQ = localStorage.getItem('admin_q');
+    const savedCol = localStorage.getItem('admin_sort');
+    const savedDir = localStorage.getItem('admin_dir');
+    if (!state.q && savedQ) state.q = savedQ;
+    if (!state.sort_column && savedCol) state.sort_column = savedCol;
+    if (!state.sort_direction && savedDir) state.sort_direction = savedDir;
+    inputQ.value = state.q;
+
+    markSort();
+    inputQ.focus();
+    inputQ.setSelectionRange(inputQ.value.length, inputQ.value.length);
+  })();
+});
+</script>
+{% endblock %}
